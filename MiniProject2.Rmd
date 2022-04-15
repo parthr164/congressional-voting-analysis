@@ -1,17 +1,19 @@
 ---
-title: "STAT-S 670: Mini Project 2"
+title: 'STAT-S 670: Mini Project 2'
 author: "Parth Ravindra Rao, Anuj Anil Patel, Brendan McShane"
 date: "29/03/2022"
-output:
-  html_document: default
-  pdf_document: default
+# output:
+#   rmarkdown: default
+#   html_document: default
+#   pdf_document: default
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, echo=FALSE, message=FALSE}
+```{r, warnings=FALSE, message=FALSE}
 library(magrittr)
 library(tidyverse)
 library(ggbiplot)
@@ -24,7 +26,7 @@ Many people have seemingly noticed increasing polarization between parties in mo
 
 ## Part 1: Polarization in two years  
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 members1989 = read.csv("congress/1989/members.csv")
 votes1989 = read.csv("congress/1989/votes.csv")
 members2014 = read.csv("congress/2014/members.csv")
@@ -43,7 +45,7 @@ recode_votes = function(vote) {
 }
 ```
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 # 1989
 votes_numeric1989 = data.frame(apply(votes1989[,-1], 1:2, recode_votes))
 votes_numeric1989$id = votes1989$id
@@ -61,7 +63,7 @@ out_prcomp2014 = prcomp(joined2014[,7:ncol(joined2014)])
 ```
 
 ### Figure 1.1  
-```{r, echo=FALSE, message=FALSE, fig.height=4, fig.width=6}
+```{r, message=FALSE, fig.height=4, fig.width=6}
 plot(out_prcomp1989$sdev^2 / sum(out_prcomp1989$sdev^2),
      main='1989 Scree Plot',
      xlab='Principal Component',
@@ -69,14 +71,14 @@ plot(out_prcomp1989$sdev^2 / sum(out_prcomp1989$sdev^2),
 ```
 
 ### Figure 1.2  
-```{r, echo=FALSE, message=FALSE, fig.height=4, fig.width=6}
+```{r, message=FALSE, fig.height=4, fig.width=6}
 plot(out_prcomp2014$sdev^2 / sum(out_prcomp2014$sdev^2),
      main='2014 Scree Plot',
      xlab='Principal Component',
      ylab='Variation Explained')
 ```
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 members_and_scores1989 = data.frame(members1989, out_prcomp1989$x)
 members_and_scores2014 = data.frame(members2014, out_prcomp2014$x)
 ```
@@ -85,14 +87,14 @@ From these two plots we can clearly tell the first principal component completel
 of the variation in 2014 as compared to 1989 is reflected in the following plots.
 
 ### Figure 1.3  
-```{r, echo=FALSE, message=FALSE, fig.height=4, fig.width=6}
+```{r, message=FALSE, fig.height=4, fig.width=6}
 ggplot(members_and_scores1989, aes(x = PC1, y = PC2)) +
   geom_point(aes(color = party)) +
   ggtitle('1989 PC1 (~30% of variance) vs PC2 (~6% of variance)')
 ```
 
 ### Figure 1.4  
-```{r, echo=FALSE, message=FALSE, fig.height=4, fig.width=6}
+```{r, message=FALSE, fig.height=4, fig.width=6}
 ggplot(members_and_scores2014, aes(x = PC1, y = PC2)) +
   geom_point(aes(color = party)) +
   ggtitle('2014 PC1 (~75% of variance) vs PC2 (<5% of variance)')
@@ -114,7 +116,7 @@ democratic outlier).
 
 In order to analyse polarization with time, we first plot the distance between the the average scores of the democrats and the republicans across the PC1 axis. The graphed scores clearly do not follow any particular increasing or decreasing trend. We cannot conclusively state that polarization increases over time. We do notice some sudden increase for particular years such as 1995, 1999 and 2003.  
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 score.df = data.frame(Year = integer(), Score = double(), Variance = double(), stringsAsFactors=FALSE)
 
 for(i in 1989:2014){
@@ -141,7 +143,7 @@ for(i in 1989:2014){
 ```
 
 ### Figure 2.1  
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 ggplot(score.df, aes(x=Year, y=Score)) + geom_point() + geom_line() +
   labs(x='Year', y='Distance between Democrats and Republicans on PC1', title='Distance between the Republic and Democratic Clusters with time') +
   theme(plot.title = element_text(hjust = 0.5))
@@ -150,7 +152,7 @@ ggplot(score.df, aes(x=Year, y=Score)) + geom_point() + geom_line() +
 We then plot the variance explained by PC1 axis across the years. We know that the PC1 axis best explains the polarization. This would suggest that as the variance explained by PC1 axis increases, the axis better explains our model, in turn making our data linearly separable using only one axis. This would suggest that the polarization between the parties increases. Looking at our plot we see that while there are slight variations, the general trend of the plots is increasing. This would suggest a general increase in polarization between the liberal and conservative ideologies.  
 
 ### Figure 2.2  
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 ggplot(score.df, aes(x=Year, y=Variance)) + geom_point() + geom_line() +
   labs(x='Year', y='Variance Explained by PC1 axis', title='Variance explained by PC1 axis with time') +
   theme(plot.title = element_text(hjust = 0.5))
@@ -168,7 +170,7 @@ We choose senator Max Baucus, a democrat from Montana, as he is one of the senat
 The ideological positions are quantified by doing PCA on the voting records for each year, and selecting the value of the first principal component for each senator. This is justified since we know that the majority of the variance is explained by the first principal component in most years.   
 For each party, the mean PC1 of all senators of that party is calculated per year and plotted. For senator Baucus, it’s simply his PC1 score for each year. The dashed horizontal lines indicate the overall means of the respective lines.
 
-```{r, echo=FALSE, message=FALSE}
+```{r, message=FALSE}
 reps <- c()  #stores the mean ideological position of all Republicans per year
 dems <- c()  #stores the mean ideological position of all Democrats per year
 sen <- c()   #stores the ideological position of the senator of interest per year
@@ -203,7 +205,7 @@ mean_lines <- ideologies %>% pivot_longer(cols=contains("position"), names_to="p
 ```
 
 ### Figure 3.1  
-```{r, echo=FALSE, message=FALSE, fig.height=7, fig.width=11}
+```{r, message=FALSE, fig.height=7, fig.width=11}
 ggplot(mean_lines, aes(x = Year, y = value, color = position)) +
   geom_line(size=1) +
   scale_color_manual(values = c("blue","red","green")) +
@@ -222,7 +224,7 @@ The two parties do seem to show some evidence of polarization as they start off 
 Next, we plot the absolute difference in ideological position between the senator and both parties over the years, and also between the two parties.  
 
 ### Figure 3.2  
-```{r, echo=FALSE, message=FALSE, fig.height=7, fig.width=11}
+```{r, message=FALSE, fig.height=7, fig.width=11}
 #Plot 3.2
 diff_lines <- ideologies %>% pivot_longer(cols=contains("diff"), names_to="differences")
 ggplot(diff_lines, aes(x = Year, y = value, color = differences)) +
