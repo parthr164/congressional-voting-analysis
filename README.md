@@ -1,1 +1,3 @@
 # congressional-voting-analysis
+
+Many people have seemingly noticed increasing polarization between parties in modern American politics, and theorize that the middle ground is being hollowed out and more moderate politicians are becoming more and more few and far between. In this project we aim to come to a more concrete conclusion to this hypothesis, and see if we can backup the claim (or the counterclaim) with data. We do this by analyzing the congressional senate voting records from 1989 to 2014, and applying principal component analysis to see if a senators vote is becoming more readily predictable simply from looking at his political affiliation.
